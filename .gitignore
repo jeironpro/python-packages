@@ -376,3 +376,7 @@ vite.config.ts.timestamp-*
 
 # Estado local del agente
 .freebuff/
+
+# El template de Python ignora lib/; las landings sirven JS de terceros desde ahi.
+!packages/*/landing/assets/js/lib/
+!packages/*/landing/assets/js/lib/**

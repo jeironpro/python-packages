@@ -16,6 +16,8 @@ y el versionado sigue [SemVer](https://semver.org/lang/spec/v2.0.0.html).
   del paquete se organiza en `docs/`.
 - La publicación en PyPI se dispara con tags `pulsar-vX.Y.Z` y comprueba que el
   tag coincide con `pulsar.__version__`.
+- La landing se publica en <https://jeironpro.github.io/python-packages/pulsar/>,
+  junto al catálogo del monorepo que reúne todos los paquetes.
 
 ## [2.0.1] - 2026-08-22
 

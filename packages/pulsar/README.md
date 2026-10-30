@@ -20,6 +20,8 @@ PULSAR se distribuye como paquete Python en PyPI: `pulsar-psr` (Python ≥ 3.10,
 pip install pulsar-psr
 ```
 
+Landing y playground: <https://jeironpro.github.io/python-packages/pulsar/>.
+
 Instala la librería y el comando `psr`:
 
 ```bash

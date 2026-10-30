@@ -1,0 +1,62 @@
+name: Publicar landings
+
+# Un único sitio de GitHub Pages: el catálogo del monorepo en la raíz y la
+# landing de cada paquete en /<paquete>/. Las landings son estáticas y usan
+# rutas relativas, así que funcionan igual bajo una subruta.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "landing/**"
+      - "packages/*/landing/**"
+      - "packages/diagram-db/src/**"
+      - "packages/pulsar/pulsar.py"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    name: Ensamblar y publicar el sitio
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sincronizar el paquete embebido en cada playground
+        run: |
+          cp packages/diagram-db/src/diagram_db/*.py packages/diagram-db/landing/vendor/diagram_db/
+          cp packages/pulsar/pulsar.py packages/pulsar/landing/pulsar.py
+
+      - name: Ensamblar el sitio
+        run: |
+          mkdir -p site
+          cp -R landing/. site/
+          for landing in packages/*/landing; do
+            paquete="$(basename "$(dirname "$landing")")"
+            echo "Añadiendo $paquete en /$paquete/"
+            cp -R "$landing" "site/$paquete"
+          done
+          find site -maxdepth 2 -name index.html | sort
+
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

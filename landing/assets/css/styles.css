@@ -189,9 +189,11 @@ code {
   color: var(--ink-soft);
 }
 
+/* Una sola columna en móvil: con `auto-fit` y tres métricas quedaría una celda
+   vacía mostrando el color de la rejilla. */
 .hero-meta {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  grid-template-columns: 1fr;
   gap: 1px;
   margin: 2.5rem 0 0;
   padding: 0;
@@ -452,6 +454,10 @@ code {
 /* ============ ADAPTACIÓN ============ */
 
 @media (min-width: 40rem) {
+  .hero-meta {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .nav-links {
     flex-basis: auto;
     margin-left: auto;

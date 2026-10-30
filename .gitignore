@@ -380,3 +380,6 @@ vite.config.ts.timestamp-*
 # El template de Python ignora lib/; las landings sirven JS de terceros desde ahi.
 !packages/*/landing/assets/js/lib/
 !packages/*/landing/assets/js/lib/**
+
+# Capturas locales generadas al revisar el sitio
+screenshot*.png

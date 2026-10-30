@@ -191,6 +191,7 @@ code {
 
 .hero h1 {
   margin-top: 0.9rem;
+  text-wrap: balance;
   font-family: var(--display);
   font-weight: 600;
   font-size: clamp(2.6rem, 9vw, 4.9rem);
@@ -253,7 +254,8 @@ code {
   font-family: var(--display);
   font-size: 1.5rem;
   line-height: 1;
-  color: var(--rule-strong);
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
 }
 
 .index-name {
@@ -305,6 +307,7 @@ code {
 }
 
 .section-head h2 {
+  text-wrap: balance;
   font-family: var(--display);
   font-size: clamp(1.7rem, 4.4vw, 2.5rem);
   line-height: 1.05;

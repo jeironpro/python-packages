@@ -72,9 +72,11 @@ cd packages/<paquete> && python -m build       # sdist + wheel
 - No hay lista de paquetes que mantener: el workflow descubre
   `packages/*/landing`, así que un paquete nuevo aparece en el sitio en cuanto
   tenga landing.
-- `actions/configure-pages` con `enablement: true` activa Pages la primera vez.
-  Si el repositorio no permite esa activación automática, hay que habilitar
-  *Settings → Pages → Source: GitHub Actions* una sola vez.
+- Pages debe estar activado una vez en *Settings → Pages → Source: GitHub
+  Actions* (o con
+  `gh api -X POST repos/<owner>/<repo>/pages -f build_type=workflow`): el token
+  del workflow no puede crear el sitio. Si no está activado, el job termina con
+  un aviso y no rompe `main`.
 
 ## Checks obligatorios
 

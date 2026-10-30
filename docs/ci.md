@@ -50,6 +50,32 @@ cd packages/<paquete> && python -m build       # sdist + wheel
 6. Configurar el publisher de PyPI para el nuevo workflow (ver
    [versionado.md](versionado.md)).
 
+## Publicación de las landings
+
+`.github/workflows/pages.yml` publica un único sitio de GitHub Pages:
+
+```text
+/                     catálogo de paquetes (landing/ del monorepo)
+/diagram-db/          landing del paquete
+/pulsar/              landing del paquete
+```
+
+- El workflow se dispara con cambios en `landing/`, en `packages/*/landing/`,
+  en el código que embeben los playgrounds o manualmente con
+  `workflow_dispatch`.
+- Antes de publicar sincroniza el código embebido en cada playground
+  (`diagram-db/landing/vendor/diagram_db` y `pulsar/landing/pulsar.py`), igual
+  que comprueban los jobs de CI.
+- El sitio se ensambla en `site/`: se copia `landing/` en la raíz y cada
+  `packages/<paquete>/landing` en `site/<paquete>/`. Las landings usan rutas
+  relativas, así que funcionan bajo la subruta sin cambios.
+- No hay lista de paquetes que mantener: el workflow descubre
+  `packages/*/landing`, así que un paquete nuevo aparece en el sitio en cuanto
+  tenga landing.
+- `actions/configure-pages` con `enablement: true` activa Pages la primera vez.
+  Si el repositorio no permite esa activación automática, hay que habilitar
+  *Settings → Pages → Source: GitHub Actions* una sola vez.
+
 ## Checks obligatorios
 
 Si se activan checks obligatorios en `main`, marca solo los jobs que siempre

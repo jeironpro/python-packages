@@ -7,8 +7,8 @@ herramienta valida el modelo (referencias, tipos, claves) y produce un diagrama
 con pata de cuervo en SVG o PNG usando Graphviz. Sin base de datos, sin ORM y
 sin servicios externos.
 
-- Landing y [playground](landing/) (sitio estático) que ejecuta el analizador
-  real en el navegador.
+- [Landing y playground](https://jeironpro.github.io/python-packages/diagram-db/)
+  que ejecuta el analizador real en el navegador.
 - Paquete en [PyPI](https://pypi.org/project/diagram-db/).
 
 ## Requisitos

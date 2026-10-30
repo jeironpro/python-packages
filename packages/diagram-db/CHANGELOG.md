@@ -14,6 +14,8 @@ El proyecto usa [versionado semántico](https://semver.org/lang/es/).
   del paquete se organiza en `docs/`.
 - La publicación en PyPI se dispara con tags `diagram-db-vX.Y.Z` y comprueba
   que el tag coincide con `diagram_db.__version__`.
+- La landing se publica en <https://jeironpro.github.io/python-packages/diagram-db/>,
+  junto al catálogo del monorepo que reúne todos los paquetes.
 
 ## [0.2.0] — 2026-10-29
 

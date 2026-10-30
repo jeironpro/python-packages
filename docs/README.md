@@ -5,6 +5,10 @@ paquetes: convenciones, versionado, CI y flujo de publicación. La documentació
 **de cada paquete** vive dentro del propio paquete, en
 `packages/<paquete>/docs/`, para que se pueda leer y publicar por separado.
 
+Sitio publicado: <https://jeironpro.github.io/python-packages/> — catálogo del
+monorepo en la raíz y una landing por paquete en `/<paquete>/`
+([cómo se publica](ci.md#publicación-de-las-landings)).
+
 ## Guías compartidas
 
 | Guía | Contenido |

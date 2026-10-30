@@ -15,6 +15,13 @@ convenciones de trabajo y una documentación coordinada.
 | [diagram-db](packages/diagram-db) | `diagram-db` | `diagram-db` | ≥ 3.10 | [docs](packages/diagram-db/docs/README.md) |
 | [pulsar](packages/pulsar) | `pulsar-psr` | `psr` | ≥ 3.10 | [docs](packages/pulsar/docs/README.md) |
 
+## Sitio de las landings
+
+Las landings se publican juntas en <https://jeironpro.github.io/python-packages/>:
+el catálogo del monorepo en la raíz y la landing de cada paquete en
+`/<paquete>/`. Cada paquete conserva su diseño y su playground; el catálogo solo
+los reúne y enlaza su documentación y su página de PyPI.
+
 ## Estructura
 
 ```text

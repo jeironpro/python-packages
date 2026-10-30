@@ -1,0 +1,103 @@
+name: CI pulsar
+
+# Workflow reutilizable. Lo invoca ci.yml solo cuando el cambio toca
+# packages/pulsar o un archivo compartido del monorepo.
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: packages/pulsar
+
+jobs:
+  lint:
+    name: pulsar · lint y formato
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar ruff
+        run: python -m pip install --upgrade pip ruff
+
+      - name: ruff check
+        run: ruff check .
+
+      - name: ruff format --check
+        run: ruff format --check .
+
+  parser-sync:
+    name: pulsar · parser del playground sincronizado
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verificar que landing/pulsar.py es idéntico a pulsar.py
+        run: |
+          if ! diff -q pulsar.py landing/pulsar.py; then
+            echo "::error::landing/pulsar.py no es idéntico a pulsar.py. Sincronízalo con: cp pulsar.py landing/pulsar.py"
+            exit 1
+          fi
+
+  test:
+    name: pulsar · tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Tests unitarios
+        run: python -m unittest discover -s tests -v
+
+      - name: Smoke test del CLI
+        run: |
+          python -m pulsar version
+          python -m pulsar parse -f ejemplo.psr > /dev/null
+
+  build:
+    name: pulsar · build y metadatos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Comprobar que la landing referencia assets existentes
+        working-directory: packages/pulsar/landing
+        run: |
+          missing=0
+          for ref in $(grep -oE '\./assets/[A-Za-z0-9_./-]+' index.html); do
+            if [ ! -f "$ref" ]; then echo "FALTA: $ref"; missing=1; fi
+          done
+          exit $missing
+
+      - name: Construir sdist y wheel
+        run: |
+          python -m pip install --upgrade pip build twine
+          python -m build
+
+      - name: Validar metadatos (twine check)
+        run: twine check --strict dist/*
+
+      - name: Smoke test del wheel instalado
+        run: |
+          python -m venv "$RUNNER_TEMP/smoke"
+          "$RUNNER_TEMP/smoke/bin/pip" install --quiet dist/*.whl
+          "$RUNNER_TEMP/smoke/bin/psr" version
+          "$RUNNER_TEMP/smoke/bin/psr" parse -f ejemplo.psr > /dev/null

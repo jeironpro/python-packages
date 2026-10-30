@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       diagram_db: ${{ steps.filtros.outputs.diagram_db }}
+      pulsar: ${{ steps.filtros.outputs.pulsar }}
     steps:
       - uses: actions/checkout@v4
 
@@ -31,6 +32,11 @@ jobs:
               - 'packages/diagram-db/**'
               - '.github/workflows/ci.yml'
               - '.github/workflows/ci-diagram-db.yml'
+              - '.pre-commit-config.yaml'
+            pulsar:
+              - 'packages/pulsar/**'
+              - '.github/workflows/ci.yml'
+              - '.github/workflows/ci-pulsar.yml'
               - '.pre-commit-config.yaml'
 
   # Higiene y estilo de todo el repositorio: hooks comunes, ruff con la
@@ -56,3 +62,9 @@ jobs:
     needs: cambios
     if: needs.cambios.outputs.diagram_db == 'true'
     uses: ./.github/workflows/ci-diagram-db.yml
+
+  pulsar:
+    name: pulsar
+    needs: cambios
+    if: needs.cambios.outputs.pulsar == 'true'
+    uses: ./.github/workflows/ci-pulsar.yml

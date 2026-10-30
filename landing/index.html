@@ -16,7 +16,7 @@
     />
     <meta
       property="og:description"
-      content="Catálogo de paquetes Python: diagram-db para diagramas entidad-relación y pulsar para el formato de datos .psr. Con playground, CLI y publicación independiente en PyPI."
+      content="Dos paquetes, dos ciclos de vida: diagram-db para diagramas entidad-relación y pulsar para el formato de datos .psr. Con playground, CLI y publicación independiente en PyPI."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://jeironpro.github.io/python-packages/" />
@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./assets/css/styles.css" />
@@ -36,21 +36,21 @@
     <header class="nav">
       <div class="wrap nav-inner">
         <a class="brand" href="#inicio" aria-label="python-packages — inicio">
-          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
             <path
               d="M12 3.5 20 8l-8 4.5L4 8l8-4.5Z"
               fill="none"
               stroke="currentColor"
-              stroke-width="1.4"
+              stroke-width="1.5"
               stroke-linejoin="round"
             />
             <path
               d="M4 12l8 4.5 8-4.5M4 16l8 4.5 8-4.5"
               fill="none"
               stroke="currentColor"
-              stroke-width="1.4"
+              stroke-width="1.5"
               stroke-linejoin="round"
-              opacity=".55"
+              opacity=".5"
             />
           </svg>
           <span class="brand-name">python-packages</span>
@@ -58,41 +58,52 @@
 
         <nav class="nav-links" aria-label="Navegación principal">
           <a href="#paquetes">Paquetes</a>
-          <a href="#convenciones">Convenciones</a>
+          <a href="#criterio">Criterio</a>
           <a href="https://github.com/jeironpro/python-packages">Repositorio</a>
         </nav>
       </div>
     </header>
 
     <main id="contenido">
-      <!-- ============ HERO ============ -->
+      <!-- ============ PORTADA ============ -->
       <section class="hero" id="inicio" aria-labelledby="hero-title">
-        <div class="wrap">
-          <p class="eyebrow">Monorepo · Python ≥ 3.10 · MIT</p>
-          <h1 id="hero-title">
-            Paquetes pequeños,<br />
-            publicados por separado.
-          </h1>
-          <p class="lead">
-            Herramientas de línea de comandos con sus propios tests, su propia
-            versión y su propia publicación en PyPI. El monorepo comparte lo que
-            no tiene sentido repetir: CI selectiva, Issues y documentación.
-          </p>
+        <div class="wrap hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Monorepo · Python ≥ 3.10 · MIT</p>
+            <h1 id="hero-title">
+              Cada paquete,
+              <span class="hero-turn">su versión.</span>
+            </h1>
+            <p class="lead">
+              Herramientas de línea de comandos con tests, versión y publicación
+              propias en PyPI. El monorepo solo comparte lo que no tiene sentido
+              repetir: CI selectiva, Issues y documentación.
+            </p>
+          </div>
 
-          <dl class="hero-meta">
-            <div>
-              <dt>Paquetes</dt>
-              <dd>2</dd>
-            </div>
-            <div>
-              <dt>Dependencias externas</dt>
-              <dd>1</dd>
-            </div>
-            <div>
-              <dt>Versionado</dt>
-              <dd>por tag</dd>
-            </div>
-          </dl>
+          <aside class="hero-index" aria-labelledby="indice-title">
+            <h2 class="index-title" id="indice-title">Índice</h2>
+            <ol class="index-list">
+              <li>
+                <a class="index-item" href="#diagram-db">
+                  <span class="index-n">01</span>
+                  <span class="index-name">diagram-db</span>
+                  <span class="index-note">Diagramas ER desde un spec.md</span>
+                </a>
+              </li>
+              <li>
+                <a class="index-item" href="#pulsar">
+                  <span class="index-n">02</span>
+                  <span class="index-name">pulsar</span>
+                  <span class="index-note">Formato de datos <code>.psr</code></span>
+                </a>
+              </li>
+            </ol>
+            <p class="index-foot">
+              02 paquetes <span aria-hidden="true">/</span> 01 dependencia externa
+              <span aria-hidden="true">/</span> un tag por release
+            </p>
+          </aside>
         </div>
       </section>
 
@@ -102,120 +113,181 @@
           <div class="section-head">
             <h2 id="paquetes-title">Paquetes</h2>
             <p>
-              Cada landing conserva su diseño y su playground; este catálogo
-              solo los reúne.
+              Cada uno conserva su landing, su playground y su diseño. Aquí solo
+              se reúnen.
             </p>
           </div>
 
           <div class="cards">
-            <article class="card">
-              <div class="card-top">
-                <h3>diagram-db</h3>
-                <p class="card-dist">
-                  <code>diagram-db</code> <span aria-hidden="true">·</span> 0.2.0
-                </p>
+            <!-- ---------- diagram-db ---------- -->
+            <article class="card card--diagram" id="diagram-db">
+              <div class="plate plate--diagram" aria-hidden="true">
+                <svg viewBox="0 0 420 190" role="presentation" focusable="false">
+                  <g class="plate-entity">
+                    <rect x="18" y="42" width="122" height="52" rx="2" />
+                    <text x="30" y="62">clientes</text>
+                    <line x1="30" y1="72" x2="86" y2="72" />
+                    <line x1="30" y1="82" x2="120" y2="82" />
+                  </g>
+                  <g class="plate-entity">
+                    <rect x="258" y="18" width="144" height="52" rx="2" />
+                    <text x="270" y="38">pedidos</text>
+                    <line x1="270" y1="48" x2="330" y2="48" />
+                    <line x1="270" y1="58" x2="386" y2="58" />
+                  </g>
+                  <g class="plate-entity">
+                    <rect x="258" y="126" width="144" height="52" rx="2" />
+                    <text x="270" y="146">lineas</text>
+                    <line x1="270" y1="156" x2="336" y2="156" />
+                    <line x1="270" y1="166" x2="386" y2="166" />
+                  </g>
+                  <g class="plate-link">
+                    <path d="M140 68h44l52-11" />
+                    <path d="M258 44h-12M258 44l-10-6M258 44l-10 6" />
+                    <path d="M302 70v56" />
+                    <path d="M302 126h-10M302 126l-10-6M302 126l-10 6" />
+                  </g>
+                </svg>
               </div>
 
-              <p class="card-desc">
-                Lee un <code>spec.md</code> con entidades, campos y claves
-                foráneas, valida el modelo y dibuja un diagrama entidad-relación
-                con pata de cuervo en SVG, PNG, DOT o JSON. Sin base de datos, sin
-                ORM y sin servicios externos.
-              </p>
+              <div class="card-body">
+                <p class="card-kicker">
+                  <span class="card-n">01</span>
+                  <code>diagram-db</code>
+                  <span aria-hidden="true">·</span>
+                  <span>0.2.0</span>
+                </p>
+                <h3>diagram-db</h3>
+                <p class="card-desc">
+                  Un <code>spec.md</code> con entidades, campos y claves foráneas
+                  entra; un diagrama entidad-relación con pata de cuervo sale.
+                  Valida el modelo y exporta SVG, PNG, DOT o JSON.
+                </p>
 
-              <ul class="chips">
-                <li>CLI <code>diagram-db</code></li>
-                <li>pytest</li>
-                <li>dependencia <code>graphviz</code></li>
-              </ul>
+                <dl class="spec">
+                  <div>
+                    <dt>CLI</dt>
+                    <dd><code>diagram-db</code></dd>
+                  </div>
+                  <div>
+                    <dt>Tests</dt>
+                    <dd>pytest · 68</dd>
+                  </div>
+                  <div>
+                    <dt>Dependencia</dt>
+                    <dd><code>graphviz</code></dd>
+                  </div>
+                </dl>
 
-              <div class="card-actions">
-                <a class="btn btn-primary" href="./diagram-db/">
-                  Abrir landing
-                  <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
-                    <path
-                      d="M7 17 17 7M9 7h8v8"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.7"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </a>
-                <a class="btn" href="https://pypi.org/project/diagram-db/">PyPI</a>
-                <a
-                  class="btn btn-ghost"
-                  href="https://github.com/jeironpro/python-packages/blob/main/packages/diagram-db/docs/README.md"
-                  >Documentación</a
-                >
+                <div class="actions">
+                  <a class="btn" href="./diagram-db/">
+                    Abrir landing
+                    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+                      <path
+                        d="M7 17 17 7M9 7h8v8"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </a>
+                  <a class="link" href="https://pypi.org/project/diagram-db/">PyPI</a>
+                  <a
+                    class="link"
+                    href="https://github.com/jeironpro/python-packages/blob/main/packages/diagram-db/docs/README.md"
+                    >Documentación</a
+                  >
+                </div>
               </div>
             </article>
 
-            <article class="card">
-              <div class="card-top">
-                <h3>pulsar</h3>
-                <p class="card-dist">
-                  <code>pulsar-psr</code> <span aria-hidden="true">·</span> 2.0.1
-                </p>
+            <!-- ---------- pulsar ---------- -->
+            <article class="card card--pulsar" id="pulsar">
+              <div class="plate plate--pulsar" aria-hidden="true">
+                <pre><span class="tok-comment">:: registro.psr</span>
+<span class="tok-key">-&gt;</span> usuario
+    <span class="tok-field">nombre</span> <span class="tok-key">&gt;&gt;</span> Ada Lovelace
+    <span class="tok-field">rol</span>    <span class="tok-key">&gt;&gt;</span> admin
+    <span class="tok-field">activo</span> <span class="tok-key">&gt;&gt;</span> <span class="tok-bool">true</span>
+<span class="tok-key">&lt;-</span></pre>
               </div>
 
-              <p class="card-desc">
-                Formato de datos jerárquico y legible a primera vista
-                (<code>.psr</code>), con bloques, atributos y listas explícitas.
-                Incluye parser, CLI, validador de esquemas y playground que
-                ejecuta el parser real en el navegador.
-              </p>
+              <div class="card-body">
+                <p class="card-kicker">
+                  <span class="card-n">02</span>
+                  <code>pulsar-psr</code>
+                  <span aria-hidden="true">·</span>
+                  <span>2.0.1</span>
+                </p>
+                <h3>pulsar</h3>
+                <p class="card-desc">
+                  Formato de datos jerárquico y legible a primera vista
+                  (<code>.psr</code>): bloques, atributos y listas explícitas.
+                  Parser, CLI, validador de esquemas y playground en el navegador.
+                </p>
 
-              <ul class="chips">
-                <li>CLI <code>psr</code></li>
-                <li>unittest</li>
-                <li>sin dependencias</li>
-              </ul>
+                <dl class="spec">
+                  <div>
+                    <dt>CLI</dt>
+                    <dd><code>psr</code></dd>
+                  </div>
+                  <div>
+                    <dt>Tests</dt>
+                    <dd>unittest · 96</dd>
+                  </div>
+                  <div>
+                    <dt>Dependencia</dt>
+                    <dd>ninguna</dd>
+                  </div>
+                </dl>
 
-              <div class="card-actions">
-                <a class="btn btn-primary" href="./pulsar/">
-                  Abrir landing
-                  <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
-                    <path
-                      d="M7 17 17 7M9 7h8v8"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.7"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </a>
-                <a class="btn" href="https://pypi.org/project/pulsar-psr/">PyPI</a>
-                <a
-                  class="btn btn-ghost"
-                  href="https://github.com/jeironpro/python-packages/blob/main/packages/pulsar/docs/README.md"
-                  >Documentación</a
-                >
+                <div class="actions">
+                  <a class="btn" href="./pulsar/">
+                    Abrir landing
+                    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+                      <path
+                        d="M7 17 17 7M9 7h8v8"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </a>
+                  <a class="link" href="https://pypi.org/project/pulsar-psr/">PyPI</a>
+                  <a
+                    class="link"
+                    href="https://github.com/jeironpro/python-packages/blob/main/packages/pulsar/docs/README.md"
+                    >Documentación</a
+                  >
+                </div>
               </div>
             </article>
           </div>
         </div>
       </section>
 
-      <!-- ============ CONVENCIONES ============ -->
-      <section class="section section-alt" id="convenciones" aria-labelledby="convenciones-title">
+      <!-- ============ CRITERIO ============ -->
+      <section class="section section-alt" id="criterio" aria-labelledby="criterio-title">
         <div class="wrap">
           <div class="section-head">
-            <h2 id="convenciones-title">Cómo se mantiene</h2>
+            <h2 id="criterio-title">El criterio</h2>
             <p>
-              Un solo repositorio, dos ciclos de vida independientes. Lo común
-              está documentado en el
-              <a href="https://github.com/jeironpro/python-packages/blob/main/docs/README.md"
+              Un repositorio, dos ciclos de vida. Lo común está documentado en el
+              <a
+                href="https://github.com/jeironpro/python-packages/blob/main/docs/README.md"
                 >centro de documentación</a
               >.
             </p>
           </div>
 
-          <ul class="rules">
+          <ol class="rules">
             <li>
-              <h3>Versión independiente</h3>
+              <span class="rule-n">01</span>
+              <h3>Versión por tag</h3>
               <p>
                 La versión vive en el módulo y el tag la confirma antes de
                 publicar. Un tag publica un solo paquete.
@@ -223,22 +295,24 @@
               <code>pulsar-v2.1.0</code>
             </li>
             <li>
+              <span class="rule-n">02</span>
               <h3>CI selectiva</h3>
               <p>
-                Cada pull request ejecuta solo los jobs de los paquetes que toca;
-                los archivos compartidos activan todos.
+                Cada pull request ejecuta solo los jobs de los paquetes que toca.
+                Un archivo compartido los activa todos.
               </p>
               <code>packages/&lt;paquete&gt;/**</code>
             </li>
             <li>
-              <h3>Issues y documentación</h3>
+              <span class="rule-n">03</span>
+              <h3>Issues compartidas</h3>
               <p>
                 Un tablero único con etiquetas por paquete y documentación
                 coordinada, separada dentro de cada paquete.
               </p>
               <code>package:&lt;paquete&gt;</code>
             </li>
-          </ul>
+          </ol>
         </div>
       </section>
     </main>

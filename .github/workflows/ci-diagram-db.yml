@@ -1,0 +1,122 @@
+name: CI diagram-db
+
+# Workflow reutilizable. Lo invoca ci.yml solo cuando el cambio toca
+# packages/diagram-db o un archivo compartido del monorepo.
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: packages/diagram-db
+
+jobs:
+  lint:
+    name: diagram-db · lint y formato
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar ruff
+        run: python -m pip install --upgrade pip ruff
+
+      - name: ruff check
+        run: ruff check .
+
+      - name: ruff format --check
+        run: ruff format --check .
+
+  vendor-sync:
+    name: diagram-db · playground sincronizado
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verificar que landing/vendor/diagram_db copia src/diagram_db
+        run: |
+          status=0
+          for file in src/diagram_db/*.py; do
+            copy="landing/vendor/diagram_db/$(basename "$file")"
+            if ! diff -q "$file" "$copy"; then
+              echo "::error::$copy no coincide con $file. Sincroniza con: cp src/diagram_db/*.py landing/vendor/diagram_db/"
+              status=1
+            fi
+          done
+          copias=$(find landing/vendor/diagram_db -name '*.py' | wc -l)
+          origen=$(find src/diagram_db -maxdepth 1 -name '*.py' | wc -l)
+          if [ "$copias" -ne "$origen" ]; then
+            echo "::error::landing/vendor/diagram_db tiene $copias módulos y src/diagram_db $origen"
+            status=1
+          fi
+          exit $status
+
+  test:
+    name: diagram-db · tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Instalar Graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r test-requirements.txt
+
+      - name: Tests
+        run: pytest
+
+  build:
+    name: diagram-db · build y metadatos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar Graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+
+      - name: Construir sdist y wheel
+        run: |
+          python -m pip install --upgrade pip build twine
+          python -m build
+
+      - name: Validar metadatos (twine check)
+        run: twine check --strict dist/*
+
+      - name: Comprobar que la landing referencia assets existentes
+        working-directory: packages/diagram-db/landing
+        run: |
+          missing=0
+          for ref in $(grep -oE '"\./assets/[A-Za-z0-9_./-]+"' index.html | tr -d '"'); do
+            if [ ! -f "$ref" ]; then echo "FALTA: $ref"; missing=1; fi
+          done
+          exit $missing
+
+      - name: Smoke test del wheel instalado
+        run: |
+          python -m venv "$RUNNER_TEMP/smoke"
+          "$RUNNER_TEMP/smoke/bin/pip" install --quiet dist/*.whl
+          "$RUNNER_TEMP/smoke/bin/diagram-db" --help > /dev/null
+          "$RUNNER_TEMP/smoke/bin/diagram-db" examples/tienda.spec.md -o "$RUNNER_TEMP/smoke/out" --quiet
+          test -s "$RUNNER_TEMP/smoke/out/tienda.svg"
+          "$RUNNER_TEMP/smoke/bin/python" -m diagram_db examples/biblioteca.spec.md --check

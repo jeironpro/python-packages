@@ -1,0 +1,10 @@
+# Archivos que entran al sdist; el wheel solo lleva el paquete y sus metadatos.
+include LICENSE
+include CHANGELOG.md
+recursive-include examples *.md
+
+# Fuera del sdist: tests, landing y configuración de CI
+prune tests
+prune landing
+prune docs
+prune .github

@@ -13,6 +13,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Decide qué paquetes se verifican. Los archivos compartidos activan todos
+  # los paquetes, porque un cambio ahí puede romper cualquiera de ellos.
+  cambios:
+    name: Detectar paquetes afectados
+    runs-on: ubuntu-latest
+    outputs:
+      diagram_db: ${{ steps.filtros.outputs.diagram_db }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filtros
+        with:
+          filters: |
+            diagram_db:
+              - 'packages/diagram-db/**'
+              - '.github/workflows/ci.yml'
+              - '.github/workflows/ci-diagram-db.yml'
+              - '.pre-commit-config.yaml'
+
   # Higiene y estilo de todo el repositorio: hooks comunes, ruff con la
   # configuración de cada paquete y verificación de archivos.
   higiene:
@@ -30,3 +50,9 @@ jobs:
 
       - name: Ejecutar hooks sobre todo el repositorio
         run: pre-commit run --all-files --show-diff-on-failure
+
+  diagram_db:
+    name: diagram-db
+    needs: cambios
+    if: needs.cambios.outputs.diagram_db == 'true'
+    uses: ./.github/workflows/ci-diagram-db.yml

@@ -1,0 +1,141 @@
+name: Release diagram-db
+
+# Publicación independiente del paquete: solo se dispara con tags
+# diagram-db-vX.Y.Z, nunca con los tags de otro paquete.
+
+on:
+  push:
+    tags: ["diagram-db-v*"]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: packages/diagram-db
+
+jobs:
+  test:
+    name: Comprobar versión y tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Comprobar que el tag coincide con la versión del módulo
+        run: |
+          version="${GITHUB_REF_NAME#diagram-db-v}"
+          modulo=$(python -c "import sys; sys.path.insert(0, 'src'); import diagram_db; print(diagram_db.__version__)")
+          echo "Tag: $version · módulo: $modulo"
+          if [ "$version" != "$modulo" ]; then
+            echo "::error::El tag $GITHUB_REF_NAME no coincide con diagram_db.__version__ ($modulo)"
+            exit 1
+          fi
+
+      - name: Instalar Graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r test-requirements.txt
+
+      - name: Tests
+        run: pytest
+
+  release:
+    name: GitHub Release
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Construir sdist y wheel
+        run: |
+          python -m pip install --upgrade pip build twine
+          python -m build
+          twine check --strict dist/*
+
+      - name: Crear la GitHub Release con los artefactos
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          files: packages/diagram-db/dist/*
+          generate_release_notes: true
+
+  publish:
+    # Trusted publishing (OIDC): sin tokens ni secretos. Requiere el publisher
+    # configurado en PyPI para owner jeironpro, repository python-packages,
+    # workflow release-diagram-db.yml y environment pypi.
+    name: Publicar en PyPI (trusted publishing)
+    needs: [test, release]
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      # Se reconstruye desde el tag en lugar de pasar artefactos entre jobs: la
+      # cuenta tiene la cuota de artefactos agotada y el build es reproducible.
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Construir el paquete
+        run: |
+          python -m pip install --upgrade pip build twine
+          python -m build
+          twine check --strict dist/*
+
+      - name: Publicar sdist y wheel
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: packages/diagram-db/dist
+
+  verify:
+    name: Verificar publicación en PyPI
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar Graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+
+      - name: Comprobar la versión publicada en PyPI
+        run: |
+          version="${GITHUB_REF_NAME#diagram-db-v}"
+          echo "Versión esperada: $version"
+          json=""
+          for i in 1 2 3 4 5 6; do
+            if json=$(curl -fsSL "https://pypi.org/pypi/diagram-db/json" 2>/dev/null); then
+              break
+            fi
+            echo "Intento $i: PyPI aún no responde, reintento en 5 s..."
+            sleep 5
+          done
+          [ -n "$json" ] || { echo "::error::PyPI no respondió tras los reintentos"; exit 1; }
+          echo "$json" | VERSION="$version" python3 -c 'import json, os, sys; info = json.load(sys.stdin)["info"]; esperada = os.environ["VERSION"]; sys.exit("PyPI tiene " + info["version"] + " y se esperaba " + esperada) if info["version"] != esperada else print("PyPI OK:", info["name"], info["version"])'
+
+      - name: Instalar desde PyPI y generar un diagrama
+        run: |
+          version="${GITHUB_REF_NAME#diagram-db-v}"
+          python3 -m venv "$RUNNER_TEMP/verify"
+          "$RUNNER_TEMP/verify/bin/pip" install --quiet "diagram-db==$version"
+          "$RUNNER_TEMP/verify/bin/diagram-db" examples/tienda.spec.md -o "$RUNNER_TEMP/verify/out" --quiet
+          test -s "$RUNNER_TEMP/verify/out/tienda.svg"
+          echo "pip install diagram-db==$version + CLI OK"

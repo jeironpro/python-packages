@@ -1,0 +1,61 @@
+name: Sin co-autores
+
+# Regla del repositorio: ni las pull requests ni los commits de squash hacia
+# main llevan trailers Co-Authored-By ni atribución a herramientas.
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  revisar:
+    name: Revisar co-autores
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Revisar mensajes de commit
+        env:
+          EVENTO: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.event.after }}
+        run: |
+          set -euo pipefail
+
+          # En una PR se revisan los commits de la rama; en un push a main solo
+          # los commits nuevos (el squash recién integrado).
+          if [ "$EVENTO" = "pull_request" ]; then
+            RANGO="origin/${BASE_REF}..HEAD"
+          elif git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            RANGO="${BEFORE}..${AFTER}"
+          else
+            RANGO="${AFTER}^!"
+          fi
+
+          echo "Rango revisado: $RANGO"
+          if git log --format='%B' "$RANGO" | grep -qiE '^[[:space:]]*co-authored-by:'; then
+            echo "::error::Hay trailers Co-Authored-By en los commits; elimínalos y vuelve a empujar."
+            git log --format='%h %s' "$RANGO"
+            exit 1
+          fi
+          echo "Sin co-autores en los commits."
+
+      - name: Revisar cuerpo de la pull request
+        if: github.event_name == 'pull_request'
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -euo pipefail
+          if printf '%s' "$PR_BODY" | grep -qiE '^[[:space:]]*co-authored-by:'; then
+            echo "::error::El cuerpo de la pull request no puede incluir Co-Authored-By."
+            exit 1
+          fi
+          echo "Sin co-autores en la descripción."

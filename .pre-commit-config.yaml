@@ -1,0 +1,23 @@
+# Configuración de pre-commit para todo el monorepo.
+# Ruff aplica la configuración del pyproject.toml más cercano a cada archivo,
+# así que cada paquete conserva sus propias reglas y su line-length.
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]  # conserva los saltos duros en .md
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=1024]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.1
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
